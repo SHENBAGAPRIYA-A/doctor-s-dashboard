@@ -61,32 +61,30 @@ const parseFirestoreDocument = (doc: FirestoreDocument): Contact => {
   };
 };
 
-// Fetch all contacts for the logged-in doctor
+// Fetch ALL contacts from Firestore (no filtering by doctorId for demo)
 export const fetchDoctorContacts = async (): Promise<Contact[]> => {
-  const { doctorId } = getCurrentDoctor();
-  
-  if (!doctorId) {
-    throw new Error('Not authenticated');
-  }
-
   try {
+    console.log('Fetching contacts from:', `${FIRESTORE_BASE_URL}/contacts`);
+    
     const response = await fetch(`${FIRESTORE_BASE_URL}/contacts`);
     
     if (!response.ok) {
+      console.error('Failed to fetch contacts:', response.status, response.statusText);
       throw new Error('Failed to fetch contacts');
     }
 
     const data = await response.json();
+    console.log('Firestore response:', data);
     
     if (!data.documents) {
+      console.log('No documents found');
       return [];
     }
 
-    // Parse and filter contacts by doctorId
-    const contacts: Contact[] = data.documents
-      .map((doc: FirestoreDocument) => parseFirestoreDocument(doc))
-      .filter((contact: Contact) => contact.doctorId === doctorId);
-
+    // Parse all contacts (show all data for demo)
+    const contacts: Contact[] = data.documents.map((doc: FirestoreDocument) => parseFirestoreDocument(doc));
+    
+    console.log('Parsed contacts:', contacts);
     return contacts;
   } catch (error) {
     console.error('Error fetching contacts:', error);
@@ -96,12 +94,6 @@ export const fetchDoctorContacts = async (): Promise<Contact[]> => {
 
 // Get a single contact by ID
 export const fetchContactById = async (contactId: string): Promise<Contact | null> => {
-  const { doctorId } = getCurrentDoctor();
-  
-  if (!doctorId) {
-    throw new Error('Not authenticated');
-  }
-
   try {
     const response = await fetch(`${FIRESTORE_BASE_URL}/contacts/${contactId}`);
     
@@ -114,11 +106,6 @@ export const fetchContactById = async (contactId: string): Promise<Contact | nul
 
     const doc = await response.json();
     const contact = parseFirestoreDocument(doc);
-
-    // Verify this contact belongs to the logged-in doctor
-    if (contact.doctorId !== doctorId) {
-      return null;
-    }
 
     return contact;
   } catch (error) {
@@ -212,14 +199,6 @@ const getQueryTypeDistribution = (contacts: Contact[]) => {
     contacts.filter(c => c.queryType === type).length
   );
   
-  // If no query types, generate sample data
-  if (distribution.every(d => d === 0)) {
-    return {
-      labels: types,
-      data: [12, 8, 15, 5, 10]
-    };
-  }
-  
   return { labels: types, data: distribution };
 };
 
@@ -239,11 +218,6 @@ const getAppointmentsTrend = (contacts: Contact[]) => {
       return appointmentDate >= weekStart && appointmentDate < weekEnd;
     }).length;
   });
-
-  // If no appointments, generate sample data
-  if (trend.every(t => t === 0)) {
-    return { weeks, data: [18, 25, 22, 30] };
-  }
 
   return { weeks, data: trend };
 };
