@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, Stethoscope, AlertCircle } from 'lucide-react';
-import { loginWithEmail } from '@/lib/firebase';
+import { Mail, Lock, LogIn, Stethoscope, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Dummy credentials for demo
+const DEMO_CREDENTIALS = {
+  email: 'doctor@clinic.com',
+  password: 'password123',
+  doctorId: 'demo-doctor-001',
+  name: 'Dr. John Smith'
+};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,12 +38,20 @@ const Login = () => {
       return;
     }
 
-    const result = await loginWithEmail(email, password);
-    
-    if (result.success) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Check dummy credentials
+    if (email === DEMO_CREDENTIALS.email && password === DEMO_CREDENTIALS.password) {
+      // Store dummy doctor info in localStorage
+      localStorage.setItem('doctorId', DEMO_CREDENTIALS.doctorId);
+      localStorage.setItem('doctorEmail', DEMO_CREDENTIALS.email);
+      localStorage.setItem('doctorName', DEMO_CREDENTIALS.name);
+      localStorage.setItem('isAuthenticated', 'true');
+      
       navigate('/dashboard');
     } else {
-      setError(result.error || 'Login failed');
+      setError('Invalid credentials. Use: doctor@clinic.com / password123');
     }
     
     setIsLoading(false);
@@ -69,6 +84,16 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Demo Credentials Hint */}
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/10 text-primary text-sm mb-4">
+              <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Demo Credentials:</p>
+                <p className="text-xs opacity-80">Email: doctor@clinic.com</p>
+                <p className="text-xs opacity-80">Password: password123</p>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Error Message */}
               {error && (
