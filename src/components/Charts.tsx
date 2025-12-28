@@ -150,24 +150,22 @@ export const PatientDistributionPie = ({ newPatients, existingPatients }: Patien
   );
 };
 
-interface QueryTypeBarChartProps {
+interface EscalationChartProps {
   labels: string[];
   data: number[];
 }
 
-export const QueryTypeBarChart = ({ labels, data }: QueryTypeBarChartProps) => {
+export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
   const chartData = {
     labels,
     datasets: [
       {
-        label: 'Appointments',
+        label: 'Escalations',
         data,
         backgroundColor: [
-          'hsl(199, 89%, 48%)',
-          'hsl(142, 76%, 36%)',
-          'hsl(25, 95%, 53%)',
-          'hsl(0, 84%, 60%)',
-          'hsl(262, 83%, 58%)',
+          'hsl(0, 84%, 60%)',    // High - Red
+          'hsl(25, 95%, 53%)',   // Medium - Orange
+          'hsl(142, 76%, 36%)',  // Low - Green
         ],
         borderRadius: 8,
         maxBarThickness: 50,
@@ -199,7 +197,7 @@ export const QueryTypeBarChart = ({ labels, data }: QueryTypeBarChartProps) => {
   };
 
   return (
-    <ChartCard title="Appointments by Query Type" delay={200}>
+    <ChartCard title="Escalation by Urgency" delay={200}>
       <Bar data={chartData} options={options} />
     </ChartCard>
   );
