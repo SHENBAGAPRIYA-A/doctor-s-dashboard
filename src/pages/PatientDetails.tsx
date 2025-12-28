@@ -200,23 +200,16 @@ const PatientDetails = () => {
               />
             </div>
 
-            {/* Keywords */}
-            {patient.keywords && patient.keywords.length > 0 && (
+            {/* Intent/Transcript */}
+            {patient.transcript && (
               <div className="mt-8 animate-slide-up" style={{ animationDelay: '500ms' }}>
                 <div className="flex items-center gap-2 mb-3">
                   <Tag className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Keywords</span>
+                  <span className="text-sm font-medium text-muted-foreground">Summary</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {patient.keywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-full text-sm font-medium"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
+                <p className="text-sm text-muted-foreground bg-secondary/50 rounded-lg p-4">
+                  {patient.transcript}
+                </p>
               </div>
             )}
           </div>
@@ -270,16 +263,17 @@ const generateSamplePatient = (id: string): Contact => ({
   id,
   name: 'John Smith',
   phone: '+1 555-1234',
+  email: 'john@example.com',
   type: 'Existing',
-  doctorId: 'demo-doctor',
+  queryType: 'Follow-up',
   status: 'Completed',
   urgency: 'Medium',
   createdAt: new Date(Date.now() - 30 * 86400000),
-  keywords: ['Consultation', 'Follow-up', 'Prescription'],
+  intent: 'General check-up',
+  transcript: 'Sample patient transcript',
   appointmentDate: new Date(Date.now() + 7 * 86400000),
   totalVisits: 5,
   lastInteraction: new Date(Date.now() - 2 * 86400000),
-  queryType: 'Follow-up',
 });
 
 export default PatientDetails;
