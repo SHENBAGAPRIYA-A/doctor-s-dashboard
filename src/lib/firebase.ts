@@ -72,10 +72,11 @@ export const logout = async () => {
   }
 };
 
-export const getCurrentDoctor = (): { doctorId: string | null; email: string | null } => {
+export const getCurrentDoctor = (): { doctorId: string; email: string; name: string } => {
   return {
-    doctorId: localStorage.getItem('doctorId'),
-    email: localStorage.getItem('doctorEmail')
+    doctorId: localStorage.getItem('doctorId') || '',
+    email: localStorage.getItem('doctorEmail') || '',
+    name: localStorage.getItem('doctorName') || 'Doctor'
   };
 };
 

@@ -10,7 +10,7 @@ import PatientList from '@/components/PatientList';
 import {
   PatientsLineChart,
   PatientDistributionPie,
-  QueryTypeBarChart,
+  EscalationChart,
   AppointmentsTrendChart,
 } from '@/components/Charts';
 import { Input } from '@/components/ui/input';
@@ -28,8 +28,9 @@ const Dashboard = () => {
     existingPatients: 0,
     newPatients: 0,
     appointmentsToday: 0,
+    escalations: 0,
     weeklyData: { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as string[], newPatients: [] as number[], existingPatients: [] as number[] },
-    queryTypeDistribution: { labels: ['Booking', 'FAQs', 'Follow-up', 'Emergency', 'Reports'] as string[], data: [] as number[] },
+    escalationData: { labels: ['High', 'Medium', 'Low'] as string[], data: [] as number[] },
     appointmentsTrend: { weeks: ['Week 1', 'Week 2', 'Week 3', 'Week 4'] as string[], data: [] as number[] },
   });
 
@@ -152,9 +153,9 @@ const Dashboard = () => {
               newPatients={analytics.newPatients}
               existingPatients={analytics.existingPatients}
             />
-            <QueryTypeBarChart
-              labels={analytics.queryTypeDistribution.labels}
-              data={analytics.queryTypeDistribution.data}
+            <EscalationChart
+              labels={analytics.escalationData.labels}
+              data={analytics.escalationData.data}
             />
             <AppointmentsTrendChart
               weeks={analytics.appointmentsTrend.weeks}

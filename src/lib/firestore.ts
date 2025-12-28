@@ -175,11 +175,14 @@ export const calculateAnalytics = (contacts: Contact[]) => {
     return appointmentDate.getTime() === today.getTime();
   }).length;
 
+  // Count escalations (High urgency patients)
+  const escalations = contacts.filter(c => c.urgency === 'High').length;
+
   // Weekly data for charts (last 7 days)
   const weeklyData = getWeeklyData(contacts);
   
-  // Query type distribution
-  const queryTypeDistribution = getQueryTypeDistribution(contacts);
+  // Escalation distribution by urgency
+  const escalationData = getEscalationData(contacts);
 
   // Weekly appointments trend (last 4 weeks)
   const appointmentsTrend = getAppointmentsTrend(contacts);
@@ -190,8 +193,9 @@ export const calculateAnalytics = (contacts: Contact[]) => {
     existingPatients,
     newPatients,
     appointmentsToday,
+    escalations,
     weeklyData,
-    queryTypeDistribution,
+    escalationData,
     appointmentsTrend,
   };
 };
@@ -231,13 +235,13 @@ const getWeeklyData = (contacts: Contact[]) => {
   return { days, newPatients, existingPatients };
 };
 
-const getQueryTypeDistribution = (contacts: Contact[]) => {
-  const types = ['Booking', 'FAQs', 'Follow-up', 'Emergency', 'Reports'];
-  const distribution = types.map(type => 
-    contacts.filter(c => c.queryType === type).length
+const getEscalationData = (contacts: Contact[]) => {
+  const urgencyLevels = ['High', 'Medium', 'Low'];
+  const distribution = urgencyLevels.map(level => 
+    contacts.filter(c => c.urgency === level).length
   );
   
-  return { labels: types, data: distribution };
+  return { labels: urgencyLevels, data: distribution };
 };
 
 const getAppointmentsTrend = (contacts: Contact[]) => {
