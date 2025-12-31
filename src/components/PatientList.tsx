@@ -2,12 +2,19 @@ import { useNavigate } from 'react-router-dom';
 import { Phone, ChevronRight, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Contact } from '@/lib/firestore';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 interface PatientListProps {
   patients: Contact[];
   loading?: boolean;
 }
+
+const formatAppointmentDate = (date: Date | undefined): string | null => {
+  if (!date) return null;
+  const parsedDate = new Date(date);
+  if (!isValid(parsedDate)) return null;
+  return format(parsedDate, 'MMM d, yyyy h:mm a');
+};
 
 const PatientList = ({ patients, loading }: PatientListProps) => {
   const navigate = useNavigate();
@@ -65,12 +72,15 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
                   <Phone className="w-3 h-3" />
                   <span>{patient.phone}</span>
                 </div>
-                {patient.appointmentDate && (
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>{format(new Date(patient.appointmentDate), 'MMM d, yyyy h:mm a')}</span>
-                  </div>
-                )}
+                {(() => {
+                  const formattedDate = formatAppointmentDate(patient.appointmentDate);
+                  return formattedDate ? (
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formattedDate}</span>
+                    </div>
+                  ) : null;
+                })()}
               </div>
             </div>
 

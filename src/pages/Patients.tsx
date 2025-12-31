@@ -7,7 +7,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
+
+const formatAppointmentDate = (date: Date | undefined): string | null => {
+  if (!date) return null;
+  const parsedDate = new Date(date);
+  if (!isValid(parsedDate)) return null;
+  return format(parsedDate, 'MMM d, yyyy h:mm a');
+};
 
 const Patients = () => {
   const navigate = useNavigate();
@@ -116,12 +123,15 @@ const Patients = () => {
                           <Phone className="w-3 h-3" />
                           {patient.phone}
                         </span>
-                        {patient.appointmentDate && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {format(new Date(patient.appointmentDate), 'MMM d, yyyy h:mm a')}
-                          </span>
-                        )}
+                        {(() => {
+                          const formattedDate = formatAppointmentDate(patient.appointmentDate);
+                          return formattedDate ? (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {formattedDate}
+                            </span>
+                          ) : null;
+                        })()}
                       </div>
                     </div>
                   </div>
