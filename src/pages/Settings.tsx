@@ -25,7 +25,8 @@ const Settings = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-4xl">
+    <div className="flex-1 flex justify-center">
+      <div className="p-6 space-y-6 w-full max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Settings</h1>
         <p className="text-sm text-muted-foreground">
@@ -148,10 +149,11 @@ const Settings = () => {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
-        <Button onClick={handleSave}>
-          Save Changes
-        </Button>
+        <div className="flex justify-end">
+          <Button onClick={handleSave}>
+            Save Changes
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -56,8 +56,8 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
       {
         label: 'New Patients',
         data: newPatients,
-        borderColor: 'hsl(199, 89%, 48%)',
-        backgroundColor: 'hsla(199, 89%, 48%, 0.1)',
+        borderColor: 'hsl(210, 79%, 46%)',
+        backgroundColor: 'hsla(210, 79%, 46%, 0.1)',
         fill: true,
         tension: 0.4,
         pointRadius: 4,
@@ -66,8 +66,8 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
       {
         label: 'Existing Patients',
         data: existingPatients,
-        borderColor: 'hsl(142, 76%, 36%)',
-        backgroundColor: 'hsla(142, 76%, 36%, 0.1)',
+        borderColor: 'hsl(160, 84%, 39%)',
+        backgroundColor: 'hsla(160, 84%, 39%, 0.1)',
         fill: true,
         tension: 0.4,
         pointRadius: 4,
@@ -121,8 +121,8 @@ export const PatientDistributionPie = ({ newPatients, existingPatients }: Patien
     datasets: [
       {
         data: [newPatients, existingPatients],
-        backgroundColor: ['hsl(199, 89%, 48%)', 'hsl(142, 76%, 36%)'],
-        borderColor: ['hsl(199, 89%, 48%)', 'hsl(142, 76%, 36%)'],
+        backgroundColor: ['hsl(210, 79%, 46%)', 'hsl(160, 84%, 39%)'],
+        borderColor: ['hsl(0, 0%, 100%)', 'hsl(0, 0%, 100%)'],
         borderWidth: 2,
         hoverOffset: 4,
       },
@@ -163,9 +163,9 @@ export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
         label: 'Escalations',
         data,
         backgroundColor: [
-          'hsl(0, 84%, 60%)',    // High - Red
-          'hsl(25, 95%, 53%)',   // Medium - Orange
-          'hsl(142, 76%, 36%)',  // Low - Green
+          'hsl(0, 72%, 51%)',    // High - Professional Red
+          'hsl(38, 92%, 50%)',   // Medium - Professional Amber
+          'hsl(160, 84%, 39%)',  // Low - Professional Teal
         ],
         borderRadius: 8,
         maxBarThickness: 50,
@@ -215,13 +215,13 @@ export const AppointmentsTrendChart = ({ weeks, data }: AppointmentsTrendProps) 
       {
         label: 'Appointments',
         data,
-        borderColor: 'hsl(262, 83%, 58%)',
-        backgroundColor: 'hsla(262, 83%, 58%, 0.1)',
+        borderColor: 'hsl(220, 70%, 50%)',
+        backgroundColor: 'hsla(220, 70%, 50%, 0.1)',
         fill: true,
         tension: 0.4,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointBackgroundColor: 'hsl(262, 83%, 58%)',
+        pointBackgroundColor: 'hsl(220, 70%, 50%)',
       },
     ],
   };

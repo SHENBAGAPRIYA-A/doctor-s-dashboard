@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { Phone, ChevronRight } from 'lucide-react';
+import { Phone, ChevronRight, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Contact } from '@/lib/firestore';
+import { format } from 'date-fns';
 
 interface PatientListProps {
   patients: Contact[];
@@ -59,9 +60,17 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
             {/* Info */}
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-foreground truncate">{patient.name}</h4>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone className="w-3 h-3" />
-                <span>{patient.phone}</span>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Phone className="w-3 h-3" />
+                  <span>{patient.phone}</span>
+                </div>
+                {patient.appointmentDate && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>{format(new Date(patient.appointmentDate), 'MMM d, yyyy h:mm a')}</span>
+                  </div>
+                )}
               </div>
             </div>
 
