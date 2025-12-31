@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Search, Phone, ChevronRight } from 'lucide-react';
+import { Users, Search, Phone, ChevronRight, Calendar } from 'lucide-react';
 import { fetchDoctorContacts } from '@/lib/firestore';
 import type { Contact } from '@/lib/firestore';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
 
 const Patients = () => {
   const navigate = useNavigate();
@@ -110,9 +111,17 @@ const Patients = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{patient.name}</h3>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Phone className="w-3 h-3" />
-                        {patient.phone}
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" />
+                          {patient.phone}
+                        </span>
+                        {patient.appointmentDate && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {format(new Date(patient.appointmentDate), 'MMM d, yyyy h:mm a')}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

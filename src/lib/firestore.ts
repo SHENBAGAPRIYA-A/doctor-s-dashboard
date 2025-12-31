@@ -155,24 +155,25 @@ export const fetchContactById = async (contactId: string): Promise<Contact | nul
 // Calculate analytics from contacts
 export const calculateAnalytics = (contacts: Contact[]) => {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
 
   const totalPatients = contacts.length;
   
+  // New patients today - filter by createdAt date matching today
   const newPatientsToday = contacts.filter(c => {
     const createdDate = new Date(c.createdAt);
-    createdDate.setHours(0, 0, 0, 0);
-    return createdDate.getTime() === today.getTime() && c.type === 'New';
+    return createdDate >= todayStart && createdDate <= todayEnd && c.type === 'New';
   }).length;
 
   const existingPatients = contacts.filter(c => c.type === 'Existing').length;
   const newPatients = contacts.filter(c => c.type === 'New').length;
 
+  // Appointments today - filter by appointmentDate matching today
   const appointmentsToday = contacts.filter(c => {
     if (!c.appointmentDate) return false;
     const appointmentDate = new Date(c.appointmentDate);
-    appointmentDate.setHours(0, 0, 0, 0);
-    return appointmentDate.getTime() === today.getTime();
+    return appointmentDate >= todayStart && appointmentDate <= todayEnd;
   }).length;
 
   // Count escalations (High urgency patients)
