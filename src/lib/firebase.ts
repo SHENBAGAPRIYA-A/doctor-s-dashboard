@@ -1,22 +1,22 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from 'firebase/firestore';
 
 // Firebase configuration for the dutu project
 const firebaseConfig = {
-  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Replace with actual API key
+  apiKey: "AIzaSyCr9e8ZBFNYn1_UhEJJ1nlHQ9K8VcwdrPo",
   authDomain: "dutu-a3d9e.firebaseapp.com",
   projectId: "dutu-a3d9e",
-  storageBucket: "dutu-a3d9e.appspot.com",
-  messagingSenderId: "XXXXXXXXXX",
-  appId: "1:XXXXXXXXXX:web:XXXXXXXXXX"
+  storageBucket: "dutu-a3d9e.firebasestorage.app",
+  messagingSenderId: "1080106403900",
+  appId: "1:1080106403900:web:60d39175b45011e3809b39",
+  measurementId: "G-YPSZ1FZL8G"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-
-// Firestore REST API base URL
-export const FIRESTORE_BASE_URL = 'https://firestore.googleapis.com/v1/projects/dutu-a3d9e/databases/(default)/documents';
+export const db = getFirestore(app);
 
 // Authentication functions
 export const loginWithEmail = async (email: string, password: string) => {
