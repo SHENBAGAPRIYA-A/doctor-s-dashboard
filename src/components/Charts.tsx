@@ -27,6 +27,21 @@ ChartJS.register(
   Filler
 );
 
+// Professional color palette - Healthcare/Medical themed
+const colors = {
+  primary: 'hsl(217, 91%, 60%)',      // Professional Blue
+  primaryLight: 'hsla(217, 91%, 60%, 0.15)',
+  secondary: 'hsl(158, 64%, 52%)',    // Teal Green
+  secondaryLight: 'hsla(158, 64%, 52%, 0.15)',
+  accent: 'hsl(262, 83%, 58%)',       // Purple
+  accentLight: 'hsla(262, 83%, 58%, 0.15)',
+  warning: 'hsl(45, 93%, 47%)',       // Amber
+  danger: 'hsl(0, 84%, 60%)',         // Red
+  success: 'hsl(142, 71%, 45%)',      // Green
+  neutral: 'hsl(215, 16%, 47%)',      // Slate
+  gridColor: 'hsla(215, 20%, 65%, 0.2)',
+};
+
 interface ChartCardProps {
   title: string;
   children: React.ReactNode;
@@ -56,22 +71,26 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
       {
         label: 'New Patients',
         data: newPatients,
-        borderColor: 'hsl(210, 79%, 46%)',
-        backgroundColor: 'hsla(210, 79%, 46%, 0.1)',
+        borderColor: colors.primary,
+        backgroundColor: colors.primaryLight,
         fill: true,
         tension: 0.4,
         pointRadius: 4,
         pointHoverRadius: 6,
+        pointBackgroundColor: colors.primary,
+        borderWidth: 2,
       },
       {
         label: 'Existing Patients',
         data: existingPatients,
-        borderColor: 'hsl(160, 84%, 39%)',
-        backgroundColor: 'hsla(160, 84%, 39%, 0.1)',
+        borderColor: colors.secondary,
+        backgroundColor: colors.secondaryLight,
         fill: true,
         tension: 0.4,
         pointRadius: 4,
         pointHoverRadius: 6,
+        pointBackgroundColor: colors.secondary,
+        borderWidth: 2,
       },
     ],
   };
@@ -85,6 +104,10 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
         labels: {
           usePointStyle: true,
           padding: 20,
+          font: {
+            size: 12,
+            weight: 500,
+          },
         },
       },
     },
@@ -92,12 +115,22 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
       y: {
         beginAtZero: true,
         grid: {
-          color: 'hsla(214, 20%, 90%, 0.5)',
+          color: colors.gridColor,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
     },
@@ -121,10 +154,10 @@ export const PatientDistributionPie = ({ newPatients, existingPatients }: Patien
     datasets: [
       {
         data: [newPatients, existingPatients],
-        backgroundColor: ['hsl(210, 79%, 46%)', 'hsl(160, 84%, 39%)'],
+        backgroundColor: [colors.primary, colors.secondary],
         borderColor: ['hsl(0, 0%, 100%)', 'hsl(0, 0%, 100%)'],
-        borderWidth: 2,
-        hoverOffset: 4,
+        borderWidth: 3,
+        hoverOffset: 8,
       },
     ],
   };
@@ -138,6 +171,10 @@ export const PatientDistributionPie = ({ newPatients, existingPatients }: Patien
         labels: {
           usePointStyle: true,
           padding: 20,
+          font: {
+            size: 12,
+            weight: 500,
+          },
         },
       },
     },
@@ -163,12 +200,13 @@ export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
         label: 'Escalations',
         data,
         backgroundColor: [
-          'hsl(0, 72%, 51%)',    // High - Professional Red
-          'hsl(38, 92%, 50%)',   // Medium - Professional Amber
-          'hsl(160, 84%, 39%)',  // Low - Professional Teal
+          colors.danger,    // High - Red
+          colors.warning,   // Medium - Amber
+          colors.success,   // Low - Green
         ],
         borderRadius: 8,
-        maxBarThickness: 50,
+        maxBarThickness: 60,
+        borderSkipped: false,
       },
     ],
   };
@@ -185,12 +223,22 @@ export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
       y: {
         beginAtZero: true,
         grid: {
-          color: 'hsla(214, 20%, 90%, 0.5)',
+          color: colors.gridColor,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
     },
@@ -215,13 +263,14 @@ export const AppointmentsTrendChart = ({ weeks, data }: AppointmentsTrendProps) 
       {
         label: 'Appointments',
         data,
-        borderColor: 'hsl(220, 70%, 50%)',
-        backgroundColor: 'hsla(220, 70%, 50%, 0.1)',
+        borderColor: colors.accent,
+        backgroundColor: colors.accentLight,
         fill: true,
         tension: 0.4,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointBackgroundColor: 'hsl(220, 70%, 50%)',
+        pointBackgroundColor: colors.accent,
+        borderWidth: 2,
       },
     ],
   };
@@ -238,12 +287,22 @@ export const AppointmentsTrendChart = ({ weeks, data }: AppointmentsTrendProps) 
       y: {
         beginAtZero: true,
         grid: {
-          color: 'hsla(214, 20%, 90%, 0.5)',
+          color: colors.gridColor,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
         },
       },
     },

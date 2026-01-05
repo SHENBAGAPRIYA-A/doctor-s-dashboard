@@ -1,6 +1,7 @@
-import { FIRESTORE_BASE_URL, getCurrentDoctor } from './firebase';
+import { db, getCurrentDoctor } from './firebase';
+import { collection, getDocs, doc, getDoc, query, orderBy, Timestamp } from 'firebase/firestore';
 
-// Types for Firestore document
+// Types for Contact
 export interface Contact {
   id: string;
   name: string;
@@ -18,47 +19,30 @@ export interface Contact {
   lastInteraction?: Date;
 }
 
-interface FirestoreValue {
-  stringValue?: string;
-  integerValue?: string;
-  timestampValue?: string;
-  nullValue?: null;
-  arrayValue?: { values?: Array<{ stringValue?: string }> };
-}
-
-interface FirestoreDocument {
-  name: string;
-  fields: Record<string, FirestoreValue>;
-  createTime: string;
-  updateTime: string;
-}
-
-// Parse Firestore document format - matching actual database fields
-const parseFirestoreDocument = (doc: FirestoreDocument): Contact => {
-  const fields = doc.fields;
-  const docId = doc.name.split('/').pop() || '';
-  
+// Parse Firestore document to Contact interface
+const parseFirestoreDocument = (docId: string, data: any): Contact => {
   // patient_type field contains "new" or "existing"
-  const patientType = fields.patient_type?.stringValue?.toLowerCase() || 'new';
+  const patientType = data.patient_type?.toLowerCase() || 'new';
   const type: 'New' | 'Existing' = patientType === 'existing' ? 'Existing' : 'New';
   
   // type field contains query type (Booking, FAQs, etc.)
-  const queryType = fields.type?.stringValue || 'General';
+  const queryType = data.type || 'General';
   
   // number field contains phone
-  const phone = fields.number?.stringValue || fields.number?.integerValue || 'N/A';
+  const phone = data.number || 'N/A';
   
   // Parse appointment date from requested_booked_time
   let appointmentDate: Date | undefined;
-  if (fields.requested_booked_time?.timestampValue) {
-    appointmentDate = new Date(fields.requested_booked_time.timestampValue);
-  } else if (fields.requested_booked_time?.stringValue && fields.requested_booked_time.stringValue !== 'null') {
-    // Try to parse string date like "2025-12-31 at 9.00"
-    try {
-      const dateStr = fields.requested_booked_time.stringValue;
-      appointmentDate = new Date(dateStr.replace(' at ', 'T').replace('.', ':'));
-    } catch {
-      // Invalid date format
+  if (data.requested_booked_time) {
+    if (data.requested_booked_time instanceof Timestamp) {
+      appointmentDate = data.requested_booked_time.toDate();
+    } else if (typeof data.requested_booked_time === 'string' && data.requested_booked_time !== 'null') {
+      try {
+        const dateStr = data.requested_booked_time;
+        appointmentDate = new Date(dateStr.replace(' at ', 'T').replace('.', ':'));
+      } catch {
+        // Invalid date format
+      }
     }
   }
   
@@ -67,57 +51,62 @@ const parseFirestoreDocument = (doc: FirestoreDocument): Contact => {
     queryType === 'Emergency' ? 'High' :
     queryType === 'Follow-up' ? 'Medium' : 'Low';
   
+  // Parse createdAt
+  let createdAt = new Date();
+  if (data.createdAt) {
+    if (data.createdAt instanceof Timestamp) {
+      createdAt = data.createdAt.toDate();
+    } else if (typeof data.createdAt === 'string') {
+      createdAt = new Date(data.createdAt);
+    }
+  }
+
+  // Parse lastInteraction
+  let lastInteraction: Date | undefined;
+  if (data.updatedAt) {
+    if (data.updatedAt instanceof Timestamp) {
+      lastInteraction = data.updatedAt.toDate();
+    } else if (typeof data.updatedAt === 'string') {
+      lastInteraction = new Date(data.updatedAt);
+    }
+  }
+  
   return {
     id: docId,
-    name: fields.name?.stringValue || 'Unknown',
+    name: data.name || 'Unknown',
     phone: phone === 'N/A' || phone === null ? 'N/A' : String(phone),
-    email: fields.email?.stringValue || '',
+    email: data.email || '',
     type,
     queryType,
-    status: fields.status?.stringValue || 'Pending',
+    status: data.status || 'Pending',
     urgency,
-    createdAt: doc.createTime ? new Date(doc.createTime) : new Date(),
-    intent: fields.intent?.stringValue,
-    transcript: fields.transcript?.stringValue,
+    createdAt,
+    intent: data.intent,
+    transcript: data.transcript,
     appointmentDate,
     totalVisits: 1,
-    lastInteraction: doc.updateTime ? new Date(doc.updateTime) : undefined,
+    lastInteraction,
   };
 };
 
-// Fetch ALL contacts from Firestore
+// Fetch ALL contacts from Firestore using SDK
 export const fetchDoctorContacts = async (): Promise<Contact[]> => {
-  const url = `${FIRESTORE_BASE_URL}/contacts`;
-  
   try {
-    console.log('Fetching contacts from:', url);
+    console.log('Fetching contacts from Firestore...');
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const contactsRef = collection(db, 'contacts');
+    const querySnapshot = await getDocs(contactsRef);
     
-    console.log('Response status:', response.status);
+    console.log('Documents found:', querySnapshot.size);
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Failed to fetch contacts:', response.status, errorText);
-      throw new Error(`Failed to fetch contacts: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Firestore raw response:', data);
-    
-    if (!data.documents || data.documents.length === 0) {
-      console.log('No documents found in response');
+    if (querySnapshot.empty) {
+      console.log('No documents found');
       return [];
     }
 
-    // Parse all contacts
-    const contacts: Contact[] = data.documents.map((doc: FirestoreDocument) => {
-      const parsed = parseFirestoreDocument(doc);
+    const contacts: Contact[] = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      const parsed = parseFirestoreDocument(doc.id, data);
       console.log('Parsed document:', parsed);
       return parsed;
     });
@@ -130,20 +119,18 @@ export const fetchDoctorContacts = async (): Promise<Contact[]> => {
   }
 };
 
-// Get a single contact by ID
+// Get a single contact by ID using SDK
 export const fetchContactById = async (contactId: string): Promise<Contact | null> => {
   try {
-    const response = await fetch(`${FIRESTORE_BASE_URL}/contacts/${contactId}`);
+    const contactRef = doc(db, 'contacts', contactId);
+    const docSnap = await getDoc(contactRef);
     
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error('Failed to fetch contact');
+    if (!docSnap.exists()) {
+      return null;
     }
 
-    const doc = await response.json();
-    const contact = parseFirestoreDocument(doc);
+    const data = docSnap.data();
+    const contact = parseFirestoreDocument(docSnap.id, data);
 
     return contact;
   } catch (error) {
