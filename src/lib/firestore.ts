@@ -189,7 +189,7 @@ export const calculateAnalytics = (contacts: Contact[]) => {
 };
 
 const getWeeklyData = (contacts: Contact[]) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const today = new Date();
   const dayOfWeek = today.getDay();
   
@@ -198,27 +198,26 @@ const getWeeklyData = (contacts: Contact[]) => {
   startOfWeek.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
   startOfWeek.setHours(0, 0, 0, 0);
 
+  // For weekly chart: patients created on each day are "new" for that day
+  // Patients created BEFORE this week are considered "existing" (returning visits)
   const newPatients = days.map((_, index) => {
     const dayDate = new Date(startOfWeek);
     dayDate.setDate(startOfWeek.getDate() + index);
+    const dayStart = new Date(dayDate);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayDate);
+    dayEnd.setHours(23, 59, 59, 999);
     
+    // Count patients created on this specific day (they were new on that day)
     return contacts.filter(c => {
       const createdDate = new Date(c.createdAt);
-      createdDate.setHours(0, 0, 0, 0);
-      return createdDate.getTime() === dayDate.getTime() && c.type === 'New';
+      return createdDate >= dayStart && createdDate <= dayEnd;
     }).length;
   });
 
-  const existingPatients = days.map((_, index) => {
-    const dayDate = new Date(startOfWeek);
-    dayDate.setDate(startOfWeek.getDate() + index);
-    
-    return contacts.filter(c => {
-      const createdDate = new Date(c.createdAt);
-      createdDate.setHours(0, 0, 0, 0);
-      return createdDate.getTime() === dayDate.getTime() && c.type === 'Existing';
-    }).length;
-  });
+  // Existing patients per day = 0 for this chart (since we're tracking new creations per day)
+  // In future, this could track returning visits if you have visit logs
+  const existingPatients = days.map(() => 0);
 
   return { days, newPatients, existingPatients };
 };
