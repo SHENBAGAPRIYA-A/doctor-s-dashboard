@@ -21,9 +21,22 @@ export interface Contact {
 
 // Parse Firestore document to Contact interface
 const parseFirestoreDocument = (docId: string, data: any): Contact => {
-  // patient_type field contains "new" or "existing"
-  const patientType = data.patient_type?.toLowerCase() || 'new';
-  const type: 'New' | 'Existing' = patientType === 'existing' ? 'Existing' : 'New';
+  // Parse createdAt first to determine patient type
+  let createdAt = new Date();
+  if (data.createdAt) {
+    if (data.createdAt instanceof Timestamp) {
+      createdAt = data.createdAt.toDate();
+    } else if (typeof data.createdAt === 'string') {
+      createdAt = new Date(data.createdAt);
+    }
+  }
+
+  // Determine if patient is "New" or "Existing" based on createdAt matching today's date
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+  const isCreatedToday = createdAt >= todayStart && createdAt <= todayEnd;
+  const type: 'New' | 'Existing' = isCreatedToday ? 'New' : 'Existing';
   
   // type field contains query type (Booking, FAQs, etc.)
   const queryType = data.type || 'General';
@@ -50,16 +63,6 @@ const parseFirestoreDocument = (docId: string, data: any): Contact => {
   const urgency: 'High' | 'Medium' | 'Low' = 
     queryType === 'Emergency' ? 'High' :
     queryType === 'Follow-up' ? 'Medium' : 'Low';
-  
-  // Parse createdAt
-  let createdAt = new Date();
-  if (data.createdAt) {
-    if (data.createdAt instanceof Timestamp) {
-      createdAt = data.createdAt.toDate();
-    } else if (typeof data.createdAt === 'string') {
-      createdAt = new Date(data.createdAt);
-    }
-  }
 
   // Parse lastInteraction
   let lastInteraction: Date | undefined;
@@ -141,22 +144,19 @@ export const fetchContactById = async (contactId: string): Promise<Contact | nul
 
 // Calculate analytics from contacts
 export const calculateAnalytics = (contacts: Contact[]) => {
+  const totalPatients = contacts.length;
+  
+  // New patients = patients created today (type is already determined by createdAt in parseFirestoreDocument)
+  const newPatients = contacts.filter(c => c.type === 'New').length;
+  const newPatientsToday = newPatients; // Same as newPatients since "New" means created today
+  
+  // Existing patients = patients NOT created today
+  const existingPatients = contacts.filter(c => c.type === 'Existing').length;
+
+  // Appointments today - filter by appointmentDate matching today
   const today = new Date();
   const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
-
-  const totalPatients = contacts.length;
-  
-  // New patients today - filter by createdAt date matching today
-  const newPatientsToday = contacts.filter(c => {
-    const createdDate = new Date(c.createdAt);
-    return createdDate >= todayStart && createdDate <= todayEnd && c.type === 'New';
-  }).length;
-
-  const existingPatients = contacts.filter(c => c.type === 'Existing').length;
-  const newPatients = contacts.filter(c => c.type === 'New').length;
-
-  // Appointments today - filter by appointmentDate matching today
   const appointmentsToday = contacts.filter(c => {
     if (!c.appointmentDate) return false;
     const appointmentDate = new Date(c.appointmentDate);
