@@ -21,7 +21,7 @@ export interface Contact {
 
 // Parse Firestore document to Contact interface
 const parseFirestoreDocument = (docId: string, data: any): Contact => {
-  // Parse createdAt first to determine patient type
+  // Parse createdAt
   let createdAt = new Date();
   if (data.createdAt) {
     if (data.createdAt instanceof Timestamp) {
@@ -31,12 +31,9 @@ const parseFirestoreDocument = (docId: string, data: any): Contact => {
     }
   }
 
-  // Determine if patient is "New" or "Existing" based on createdAt matching today's date
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
-  const isCreatedToday = createdAt >= todayStart && createdAt <= todayEnd;
-  const type: 'New' | 'Existing' = isCreatedToday ? 'New' : 'Existing';
+  // Use patient_type field from Firestore to determine New or Existing
+  const patientType = data.patient_type?.toLowerCase() || 'new';
+  const type: 'New' | 'Existing' = patientType === 'existing' ? 'Existing' : 'New';
   
   // type field contains query type (Booking, FAQs, etc.)
   const queryType = data.type || 'General';
@@ -144,19 +141,25 @@ export const fetchContactById = async (contactId: string): Promise<Contact | nul
 
 // Calculate analytics from contacts
 export const calculateAnalytics = (contacts: Contact[]) => {
-  const totalPatients = contacts.length;
-  
-  // New patients = patients created today (type is already determined by createdAt in parseFirestoreDocument)
-  const newPatients = contacts.filter(c => c.type === 'New').length;
-  const newPatientsToday = newPatients; // Same as newPatients since "New" means created today
-  
-  // Existing patients = patients NOT created today
-  const existingPatients = contacts.filter(c => c.type === 'Existing').length;
-
-  // Appointments today - filter by appointmentDate matching today
   const today = new Date();
   const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+  const totalPatients = contacts.length;
+  
+  // New patients = patients with patient_type "new"
+  const newPatients = contacts.filter(c => c.type === 'New').length;
+  
+  // New patients today = patients with patient_type "new" AND createdAt is today
+  const newPatientsToday = contacts.filter(c => {
+    const createdDate = new Date(c.createdAt);
+    return c.type === 'New' && createdDate >= todayStart && createdDate <= todayEnd;
+  }).length;
+  
+  // Existing patients = patients with patient_type "existing"
+  const existingPatients = contacts.filter(c => c.type === 'Existing').length;
+
+  // Appointments today - filter by appointmentDate matching today
   const appointmentsToday = contacts.filter(c => {
     if (!c.appointmentDate) return false;
     const appointmentDate = new Date(c.appointmentDate);
@@ -198,8 +201,7 @@ const getWeeklyData = (contacts: Contact[]) => {
   startOfWeek.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
   startOfWeek.setHours(0, 0, 0, 0);
 
-  // For weekly chart: patients created on each day are "new" for that day
-  // Patients created BEFORE this week are considered "existing" (returning visits)
+  // New patients per day (patient_type = "new" AND createdAt on that day)
   const newPatients = days.map((_, index) => {
     const dayDate = new Date(startOfWeek);
     dayDate.setDate(startOfWeek.getDate() + index);
@@ -208,16 +210,26 @@ const getWeeklyData = (contacts: Contact[]) => {
     const dayEnd = new Date(dayDate);
     dayEnd.setHours(23, 59, 59, 999);
     
-    // Count patients created on this specific day (they were new on that day)
     return contacts.filter(c => {
       const createdDate = new Date(c.createdAt);
-      return createdDate >= dayStart && createdDate <= dayEnd;
+      return c.type === 'New' && createdDate >= dayStart && createdDate <= dayEnd;
     }).length;
   });
 
-  // Existing patients per day = 0 for this chart (since we're tracking new creations per day)
-  // In future, this could track returning visits if you have visit logs
-  const existingPatients = days.map(() => 0);
+  // Existing patients per day (patient_type = "existing" AND createdAt on that day)
+  const existingPatients = days.map((_, index) => {
+    const dayDate = new Date(startOfWeek);
+    dayDate.setDate(startOfWeek.getDate() + index);
+    const dayStart = new Date(dayDate);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayDate);
+    dayEnd.setHours(23, 59, 59, 999);
+    
+    return contacts.filter(c => {
+      const createdDate = new Date(c.createdAt);
+      return c.type === 'Existing' && createdDate >= dayStart && createdDate <= dayEnd;
+    }).length;
+  });
 
   return { days, newPatients, existingPatients };
 };
