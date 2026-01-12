@@ -27,19 +27,19 @@ ChartJS.register(
   Filler
 );
 
-// Professional color palette - Healthcare/Medical themed
+// Professional color palette - Teal & Mint themed (from reference image)
 const colors = {
-  primary: 'hsl(217, 91%, 60%)',      // Professional Blue
-  primaryLight: 'hsla(217, 91%, 60%, 0.15)',
-  secondary: 'hsl(158, 64%, 52%)',    // Teal Green
-  secondaryLight: 'hsla(158, 64%, 52%, 0.15)',
-  accent: 'hsl(262, 83%, 58%)',       // Purple
-  accentLight: 'hsla(262, 83%, 58%, 0.15)',
+  primary: 'hsl(195, 58%, 25%)',      // Dark Teal (#1B4B66)
+  primaryLight: 'hsla(195, 58%, 25%, 0.15)',
+  secondary: 'hsl(166, 62%, 61%)',    // Mint Green (#5DD9C1)
+  secondaryLight: 'hsla(166, 62%, 61%, 0.15)',
+  accent: 'hsl(180, 50%, 45%)',       // Medium Teal
+  accentLight: 'hsla(180, 50%, 45%, 0.15)',
   warning: 'hsl(45, 93%, 47%)',       // Amber
   danger: 'hsl(0, 84%, 60%)',         // Red
-  success: 'hsl(142, 71%, 45%)',      // Green
+  success: 'hsl(166, 62%, 61%)',      // Mint Green
   neutral: 'hsl(215, 16%, 47%)',      // Slate
-  gridColor: 'hsla(215, 20%, 65%, 0.2)',
+  gridColor: 'hsla(195, 20%, 65%, 0.2)',
 };
 
 interface ChartCardProps {
