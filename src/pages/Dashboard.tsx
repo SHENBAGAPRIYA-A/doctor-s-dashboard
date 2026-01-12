@@ -122,7 +122,7 @@ const Dashboard = () => {
               title="New Patients Today"
               value={loading ? '...' : analytics.newPatientsToday}
               icon={UserPlus}
-              variant="success"
+              variant="newPatient"
               trend={{ value: 12, isPositive: true }}
               delay={50}
             />
@@ -130,14 +130,14 @@ const Dashboard = () => {
               title="Existing Patients"
               value={loading ? '...' : analytics.existingPatients}
               icon={UserCheck}
-              variant="default"
+              variant="existingPatient"
               delay={100}
             />
             <StatCard
               title="Appointments Today"
               value={loading ? '...' : analytics.appointmentsToday}
               icon={Calendar}
-              variant="warning"
+              variant="appointment"
               delay={150}
             />
           </div>

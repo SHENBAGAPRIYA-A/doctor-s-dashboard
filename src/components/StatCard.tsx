@@ -9,23 +9,25 @@ interface StatCardProps {
     value: number;
     isPositive: boolean;
   };
-  variant?: 'default' | 'primary' | 'success' | 'warning';
+  variant?: 'default' | 'primary' | 'newPatient' | 'existingPatient' | 'appointment';
   delay?: number;
 }
 
 const StatCard = ({ title, value, icon: Icon, trend, variant = 'default', delay = 0 }: StatCardProps) => {
   const variantStyles = {
     default: 'border-border',
-    primary: 'border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10',
-    success: 'border-medical-green/20 bg-gradient-to-br from-medical-green/5 to-medical-green/10',
-    warning: 'border-medical-orange/20 bg-gradient-to-br from-medical-orange/5 to-medical-orange/10',
+    primary: 'border-[hsl(195,58%,25%)]/20 bg-gradient-to-br from-[hsl(195,58%,25%)]/5 to-[hsl(195,58%,25%)]/10',
+    newPatient: 'border-[hsl(195,58%,25%)]/20 bg-gradient-to-br from-[hsl(195,58%,25%)]/5 to-[hsl(195,58%,25%)]/10',
+    existingPatient: 'border-[hsl(166,62%,61%)]/20 bg-gradient-to-br from-[hsl(166,62%,61%)]/5 to-[hsl(166,62%,61%)]/10',
+    appointment: 'border-[hsl(180,50%,45%)]/20 bg-gradient-to-br from-[hsl(180,50%,45%)]/5 to-[hsl(180,50%,45%)]/10',
   };
 
   const iconStyles = {
     default: 'bg-secondary text-secondary-foreground',
-    primary: 'bg-primary text-primary-foreground',
-    success: 'bg-medical-green text-primary-foreground',
-    warning: 'bg-medical-orange text-primary-foreground',
+    primary: 'bg-[hsl(195,58%,25%)] text-white',
+    newPatient: 'bg-[hsl(195,58%,25%)] text-white',
+    existingPatient: 'bg-[hsl(166,62%,61%)] text-white',
+    appointment: 'bg-[hsl(180,50%,45%)] text-white',
   };
 
   return (
