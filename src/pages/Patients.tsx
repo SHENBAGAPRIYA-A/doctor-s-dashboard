@@ -29,7 +29,7 @@ const Patients = () => {
         const contacts = await fetchDoctorContacts();
         setPatients(contacts);
       } catch (err) {
-        console.error('Error loading patients:', err);
+        console.error('Error loading guests:', err);
       } finally {
         setLoading(false);
       }
@@ -76,9 +76,9 @@ const Patients = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Patients</h1>
+          <h1 className="text-2xl font-bold text-foreground">Guests</h1>
           <p className="text-sm text-muted-foreground">
-            {patients.length} total patients
+            {patients.length} total guests
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@ const Patients = () => {
       <div className="relative w-full max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="Search patients by name or phone..."
+          placeholder="Search guests by name or phone..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"
@@ -98,7 +98,7 @@ const Patients = () => {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Users className="w-12 h-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No patients found</p>
+              <p className="text-muted-foreground">No guests found</p>
             </CardContent>
           </Card>
         ) : (

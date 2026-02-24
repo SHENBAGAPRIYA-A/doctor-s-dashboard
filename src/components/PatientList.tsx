@@ -40,7 +40,7 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
   if (patients.length === 0) {
     return (
       <div className="bg-card rounded-xl border border-border p-8 text-center">
-        <p className="text-muted-foreground">No patients found</p>
+        <p className="text-muted-foreground">No guests found</p>
       </div>
     );
   }
@@ -59,12 +59,10 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
           style={{ animationDelay: `${index * 50}ms` }}
         >
           <div className="flex items-center gap-4">
-            {/* Avatar */}
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-lg">
               {patient.name.charAt(0).toUpperCase()}
             </div>
 
-            {/* Info */}
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-foreground truncate">{patient.name}</h4>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -84,28 +82,23 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
               </div>
             </div>
 
-            {/* Badges */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <span
-                className={cn(
-                  'px-3 py-1 rounded-full text-xs font-semibold',
-                  patient.type === 'New'
-                    ? 'bg-medical-blue-light text-medical-blue'
-                    : 'bg-medical-green-light text-medical-green'
-                )}
-              >
+              <span className={cn(
+                'px-3 py-1 rounded-full text-xs font-semibold',
+                patient.type === 'New'
+                  ? 'bg-medical-blue-light text-medical-blue'
+                  : 'bg-medical-green-light text-medical-green'
+              )}>
                 {patient.type}
               </span>
-              <span
-                className={cn(
-                  'px-3 py-1 rounded-full text-xs font-semibold',
-                  patient.urgency === 'High'
-                    ? 'bg-medical-red-light text-medical-red'
-                    : patient.urgency === 'Medium'
-                    ? 'bg-medical-orange-light text-medical-orange'
-                    : 'bg-medical-green-light text-medical-green'
-                )}
-              >
+              <span className={cn(
+                'px-3 py-1 rounded-full text-xs font-semibold',
+                patient.urgency === 'High'
+                  ? 'bg-medical-red-light text-medical-red'
+                  : patient.urgency === 'Medium'
+                  ? 'bg-medical-orange-light text-medical-orange'
+                  : 'bg-medical-green-light text-medical-green'
+              )}>
                 {patient.urgency}
               </span>
               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-medical-green-light text-medical-green">
@@ -113,7 +106,6 @@ const PatientList = ({ patients, loading }: PatientListProps) => {
               </span>
             </div>
 
-            {/* Arrow */}
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
         </div>

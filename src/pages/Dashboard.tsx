@@ -37,7 +37,6 @@ const Dashboard = () => {
   const doctor = getCurrentDoctor();
 
   useEffect(() => {
-    // Fetch data from Firestore
     const loadData = async () => {
       setLoading(true);
       setError(null);
@@ -64,7 +63,6 @@ const Dashboard = () => {
     loadData();
   }, []);
 
-  // Filter patients based on search
   const filteredPatients = patients.filter(
     (patient) =>
       patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -79,27 +77,24 @@ const Dashboard = () => {
       />
 
       <main className="flex-1 overflow-auto">
-        {/* Header */}
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
               <p className="text-sm text-muted-foreground">
-                Welcome back, {doctor.email || 'Doctor'}
+                Welcome back, {doctor.email || 'Manager'}
               </p>
             </div>
             <div className="flex items-center gap-4">
-              {/* Search */}
               <div className="relative w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search patients..."
+                  placeholder="Search guests..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
                 />
               </div>
-              {/* Notifications */}
               <button className="relative p-2 rounded-lg hover:bg-secondary transition-colors">
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-medical-red rounded-full" />
@@ -112,14 +107,14 @@ const Dashboard = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
-              title="Total Patients"
+              title="Total Guests"
               value={loading ? '...' : analytics.totalPatients}
               icon={Users}
               variant="primary"
               delay={0}
             />
             <StatCard
-              title="New Patients Today"
+              title="New Guests Today"
               value={loading ? '...' : analytics.newPatientsToday}
               icon={UserPlus}
               variant="newPatient"
@@ -127,14 +122,14 @@ const Dashboard = () => {
               delay={50}
             />
             <StatCard
-              title="Existing Patients"
+              title="Returning Guests"
               value={loading ? '...' : analytics.existingPatients}
               icon={UserCheck}
               variant="existingPatient"
               delay={100}
             />
             <StatCard
-              title="Appointments Today"
+              title="Reservations Today"
               value={loading ? '...' : analytics.appointmentsToday}
               icon={Calendar}
               variant="appointment"
@@ -163,12 +158,12 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Patient List */}
+          {/* Guest List */}
           <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-foreground">Recent Patients</h2>
+              <h2 className="text-xl font-semibold text-foreground">Recent Guests</h2>
               <span className="text-sm text-muted-foreground">
-                {filteredPatients.length} patients
+                {filteredPatients.length} guests
               </span>
             </div>
             <PatientList patients={filteredPatients.slice(0, 10)} loading={loading} />
