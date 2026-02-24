@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, User, Phone, ChevronRight } from 'lucide-react';
 import { fetchDoctorContacts } from '@/lib/firestore';
 import type { Contact } from '@/lib/firestore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -17,9 +17,7 @@ const Appointments = () => {
       setLoading(true);
       try {
         const contacts = await fetchDoctorContacts();
-        // Filter contacts that have appointment dates
         const withAppointments = contacts.filter(c => c.appointmentDate);
-        // Sort by appointment date
         withAppointments.sort((a, b) => {
           const dateA = a.appointmentDate ? new Date(a.appointmentDate).getTime() : 0;
           const dateB = b.appointmentDate ? new Date(b.appointmentDate).getTime() : 0;
@@ -27,7 +25,7 @@ const Appointments = () => {
         });
         setAppointments(withAppointments);
       } catch (err) {
-        console.error('Error loading appointments:', err);
+        console.error('Error loading reservations:', err);
       } finally {
         setLoading(false);
       }
@@ -38,18 +36,12 @@ const Appointments = () => {
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
     });
   };
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return new Date(date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   const getStatusColor = (status: string) => {
@@ -78,9 +70,9 @@ const Appointments = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Appointments</h1>
+          <h1 className="text-2xl font-bold text-foreground">Reservations</h1>
           <p className="text-sm text-muted-foreground">
-            {appointments.length} scheduled appointments
+            {appointments.length} table reservations
           </p>
         </div>
       </div>
@@ -90,7 +82,7 @@ const Appointments = () => {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Calendar className="w-12 h-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No appointments scheduled</p>
+              <p className="text-muted-foreground">No reservations scheduled</p>
             </CardContent>
           </Card>
         ) : (

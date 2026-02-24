@@ -13,7 +13,6 @@ import {
 } from 'chart.js';
 import { Line, Pie, Bar } from 'react-chartjs-2';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,16 +28,16 @@ ChartJS.register(
 
 // Professional color palette - Teal & Mint themed (from reference image)
 const colors = {
-  primary: 'hsl(195, 58%, 25%)',      // Dark Teal (#1B4B66)
+  primary: 'hsl(195, 58%, 25%)',
   primaryLight: 'hsla(195, 58%, 25%, 0.15)',
-  secondary: 'hsl(166, 62%, 61%)',    // Mint Green (#5DD9C1)
+  secondary: 'hsl(166, 62%, 61%)',
   secondaryLight: 'hsla(166, 62%, 61%, 0.15)',
-  accent: 'hsl(180, 50%, 45%)',       // Medium Teal
+  accent: 'hsl(180, 50%, 45%)',
   accentLight: 'hsla(180, 50%, 45%, 0.15)',
-  warning: 'hsl(45, 93%, 47%)',       // Amber
-  danger: 'hsl(0, 84%, 60%)',         // Red
-  success: 'hsl(166, 62%, 61%)',      // Mint Green
-  neutral: 'hsl(215, 16%, 47%)',      // Slate
+  warning: 'hsl(45, 93%, 47%)',
+  danger: 'hsl(0, 84%, 60%)',
+  success: 'hsl(166, 62%, 61%)',
+  neutral: 'hsl(215, 16%, 47%)',
   gridColor: 'hsla(195, 20%, 65%, 0.2)',
 };
 
@@ -69,7 +68,7 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
     labels: days,
     datasets: [
       {
-        label: 'New Patients',
+        label: 'New Guests',
         data: newPatients,
         borderColor: colors.primary,
         backgroundColor: colors.primaryLight,
@@ -81,7 +80,7 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
         borderWidth: 2,
       },
       {
-        label: 'Existing Patients',
+        label: 'Returning Guests',
         data: existingPatients,
         borderColor: colors.secondary,
         backgroundColor: colors.secondaryLight,
@@ -104,40 +103,18 @@ export const PatientsLineChart = ({ days, newPatients, existingPatients }: Patie
         labels: {
           usePointStyle: true,
           padding: 20,
-          font: {
-            size: 12,
-            weight: 500,
-          },
+          font: { size: 12, weight: 500 },
         },
       },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: colors.gridColor,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
+      y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { font: { size: 11 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
     },
   };
 
   return (
-    <ChartCard title="New vs Existing Patients" delay={100}>
+    <ChartCard title="New vs Returning Guests" delay={100}>
       <Line data={data} options={options} />
     </ChartCard>
   );
@@ -150,7 +127,7 @@ interface PatientDistributionPieProps {
 
 export const PatientDistributionPie = ({ newPatients, existingPatients }: PatientDistributionPieProps) => {
   const data = {
-    labels: ['New Patients', 'Existing Patients'],
+    labels: ['New Guests', 'Returning Guests'],
     datasets: [
       {
         data: [newPatients, existingPatients],
@@ -168,20 +145,13 @@ export const PatientDistributionPie = ({ newPatients, existingPatients }: Patien
     plugins: {
       legend: {
         position: 'bottom' as const,
-        labels: {
-          usePointStyle: true,
-          padding: 20,
-          font: {
-            size: 12,
-            weight: 500,
-          },
-        },
+        labels: { usePointStyle: true, padding: 20, font: { size: 12, weight: 500 } },
       },
     },
   };
 
   return (
-    <ChartCard title="Patient Distribution" delay={150}>
+    <ChartCard title="Guest Distribution" delay={150}>
       <Pie data={data} options={options} />
     </ChartCard>
   );
@@ -197,13 +167,9 @@ export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
     labels,
     datasets: [
       {
-        label: 'Escalations',
+        label: 'Priority Requests',
         data,
-        backgroundColor: [
-          colors.danger,    // High - Red
-          colors.warning,   // Medium - Amber
-          colors.success,   // Low - Green
-        ],
+        backgroundColor: [colors.danger, colors.warning, colors.success],
         borderRadius: 8,
         maxBarThickness: 60,
         borderSkipped: false,
@@ -214,38 +180,15 @@ export const EscalationChart = ({ labels, data }: EscalationChartProps) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
+    plugins: { legend: { display: false } },
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: colors.gridColor,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
+      y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { font: { size: 11 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
     },
   };
 
   return (
-    <ChartCard title="Escalation by Urgency" delay={200}>
+    <ChartCard title="Requests by Priority" delay={200}>
       <Bar data={chartData} options={options} />
     </ChartCard>
   );
@@ -261,7 +204,7 @@ export const AppointmentsTrendChart = ({ weeks, data }: AppointmentsTrendProps) 
     labels: weeks,
     datasets: [
       {
-        label: 'Appointments',
+        label: 'Reservations',
         data,
         borderColor: colors.accent,
         backgroundColor: colors.accentLight,
@@ -278,38 +221,15 @@ export const AppointmentsTrendChart = ({ weeks, data }: AppointmentsTrendProps) 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
+    plugins: { legend: { display: false } },
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: colors.gridColor,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-        },
-      },
+      y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { font: { size: 11 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 11 } } },
     },
   };
 
   return (
-    <ChartCard title="Appointments Trend" delay={250}>
+    <ChartCard title="Reservations Trend" delay={250}>
       <Line data={chartData} options={options} />
     </ChartCard>
   );

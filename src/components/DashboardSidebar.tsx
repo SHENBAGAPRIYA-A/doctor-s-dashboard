@@ -6,7 +6,7 @@ import {
   FileText,
   Settings,
   LogOut,
-  Stethoscope,
+  UtensilsCrossed,
   ChevronLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -20,8 +20,8 @@ interface SidebarProps {
 
 const menuItems = [
   { id: 'home', label: 'Home', icon: Home, path: '/dashboard' },
-  { id: 'appointments', label: 'Appointments', icon: Calendar, path: '/dashboard/appointments' },
-  { id: 'patients', label: 'Patients', icon: Users, path: '/dashboard/patients' },
+  { id: 'reservations', label: 'Reservations', icon: Calendar, path: '/dashboard/appointments' },
+  { id: 'guests', label: 'Guests', icon: Users, path: '/dashboard/patients' },
   { id: 'reports', label: 'Reports', icon: FileText, path: '/dashboard/reports' },
   { id: 'settings', label: 'Settings', icon: Settings, path: '/dashboard/settings' },
 ];
@@ -53,12 +53,12 @@ const DashboardSidebar = ({ collapsed = false, onToggle }: SidebarProps) => {
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-sidebar-primary flex items-center justify-center flex-shrink-0">
-            <Stethoscope className="w-5 h-5 text-sidebar-primary-foreground" />
+            <UtensilsCrossed className="w-5 h-5 text-sidebar-primary-foreground" />
           </div>
           {!collapsed && (
             <div className="animate-fade-in">
-              <h2 className="font-semibold text-sidebar-foreground">Doctor Panel</h2>
-              <p className="text-xs text-sidebar-foreground/60">Medical Analytics</p>
+              <h2 className="font-semibold text-sidebar-foreground">Restaurant</h2>
+              <p className="text-xs text-sidebar-foreground/60">Dine-in Management</p>
             </div>
           )}
         </div>
@@ -91,7 +91,6 @@ const DashboardSidebar = ({ collapsed = false, onToggle }: SidebarProps) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border space-y-2">
-        {/* Collapse Toggle */}
         {onToggle && (
           <Button
             variant="ghost"
@@ -112,7 +111,6 @@ const DashboardSidebar = ({ collapsed = false, onToggle }: SidebarProps) => {
           </Button>
         )}
 
-        {/* Logout */}
         <Button
           variant="ghost"
           size="sm"

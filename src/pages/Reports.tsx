@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Users, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 import { fetchDoctorContacts, calculateAnalytics } from '@/lib/firestore';
 import type { Contact } from '@/lib/firestore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   PatientsLineChart,
@@ -68,7 +68,7 @@ const Reports = () => {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Reports</h1>
         <p className="text-sm text-muted-foreground">
-          Analytics and insights from your patient data
+          Analytics and insights from your restaurant data
         </p>
       </div>
 
@@ -81,7 +81,7 @@ const Reports = () => {
                 <Users className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Patients</p>
+                <p className="text-sm text-muted-foreground">Total Guests</p>
                 <p className="text-2xl font-bold text-foreground">{analytics.totalPatients}</p>
               </div>
             </div>
@@ -95,7 +95,7 @@ const Reports = () => {
                 <TrendingUp className="w-6 h-6" style={{ color: 'hsl(142, 76%, 36%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">New Patients</p>
+                <p className="text-sm text-muted-foreground">New Guests</p>
                 <p className="text-2xl font-bold text-foreground">{analytics.newPatients}</p>
               </div>
             </div>
@@ -109,7 +109,7 @@ const Reports = () => {
                 <Calendar className="w-6 h-6" style={{ color: 'hsl(25, 95%, 53%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Appointments Today</p>
+                <p className="text-sm text-muted-foreground">Reservations Today</p>
                 <p className="text-2xl font-bold text-foreground">{analytics.appointmentsToday}</p>
               </div>
             </div>
@@ -123,7 +123,7 @@ const Reports = () => {
                 <AlertTriangle className="w-6 h-6" style={{ color: 'hsl(0, 84%, 60%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Escalations</p>
+                <p className="text-sm text-muted-foreground">Priority Requests</p>
                 <p className="text-2xl font-bold text-foreground">{analytics.escalations}</p>
               </div>
             </div>
